@@ -123,8 +123,8 @@
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
         <span class="info-link"><a href="http://zrongl.github.io/categories.html#translation-ref" >translation</a></span>
     </div>
-    <h3 id="basic-structure">Basic Structure</h3>
-<p>一个Mach-O文件包含三个主要的区域(region)：<br /></p>
+    <p>###Basic Structure
+一个Mach-O文件包含三个主要的区域(region)：<br /></p>
 <ul>
 <li>在每一个Mach-O文件的开始都有一个header结构(header structure)来标示这是一个Mach-O文件。这个header同时还包含着其他一些信息：文件类型信息，目标架构信息和一写影响文件其他部分内容的flags标示。</li>
 <li>紧跟着header的是一系列大小可变的加载命令(load commands)，用于标示文件的布局和联动特征。两个加载命令之间的信息一般有一下几种含义:</li>
@@ -149,8 +149,8 @@
 
 <p>segment和section通常是通过名称进行访问的，segment的名称由两个底杠加上大写字母组成(如：__TEXT)；section的名称由两个底杠加上小写字母组成(如：__text)。这些命名规则都是约定俗成的。</p>
 
-<h3 id="header-structure">Header Structure</h3>
-<p>通过otool -h hw.out命令可以显示出Mach-O文件的Mach header信息，其结构如下：</p>
+<p>###Header Structure
+通过otool -h hw.out命令可以显示出Mach-O文件的Mach header信息，其结构如下：</p>
 
 <pre><code>localhost:binspect ronglei$ xcrun otool -h hw.out 
 hw.out:
@@ -203,8 +203,8 @@ Mach header
 <li>ncmds和sizeofcmds分别标示load commands的数量和所有load commands命令的size</li>
 </ul>
 
-<h3 id="load-commands">Load Commands</h3>
-<p>Load Commands不仅定义了文件的逻辑结构，还定义了文件在虚拟内存中的布局。他们是Mach-O文件的核心从上面输出的mac header信息中我看看到我们的Mach-O文件总共有16个load commads：</p>
+<p>###Load Commands
+Load Commands不仅定义了文件的逻辑结构，还定义了文件在虚拟内存中的布局。他们是Mach-O文件的核心从上面输出的mac header信息中我看看到我们的Mach-O文件总共有16个load commads：</p>
 
 <p>在终端通过otool -l hw.out 命令可以查看Mach-O文件中所有Load Commands。<br /></p>
 <pre><code>localhost:binspect ronglei$ xcrun otool -l hw.out 
@@ -455,8 +455,8 @@ Load command 15
 <li>LC_DYLIB_CODE_SIGN_DRS：(Load command 15)为动态链接库定义了代码签名。</li>
 </ul>
 
-<h3 id="segments-and-sections">Segments and Sections</h3>
-<p>segment 在Mach-O文件中定义了一定范围的字节数，在动态链接器加载程序的时候这一特定范围的字节数将被映射到对应的虚拟内存中。
+<p>###Segments and Sections
+segment 在Mach-O文件中定义了一定范围的字节数，在动态链接器加载程序的时候这一特定范围的字节数将被映射到对应的虚拟内存中。
 出于内存分页的考虑，头结构和加载命令通常会成为第一个segment 的一部分。在一个可执行文件中，这通常意味着头结构和加载命令会被放置到__TEXT segment 的开头，因为它才是第一个包含数据的segment。<br /></p>
 
 <p><strong>注意：内容为空的section需要被放置在segment的末尾，否则标准工具将无法对Mach-O文件正确地进行操作。</strong></p>
@@ -505,8 +505,8 @@ section，它负责为DWARF格式提供栈展开信息。</li>
 <li>__LINKEDIT：段包含会被动态链接器使用的原生数据，如：符号，字符串和重定位表入口。</li>
 </ul>
 
-<h3 id="reference">Reference</h3>
-<p><a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/#//apple_ref/c/">OS X ABI Mach-O File Format Reference</a><br />
+<p>###Reference
+<a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/#//apple_ref/c/">OS X ABI Mach-O File Format Reference</a><br />
 <a href="http://www.reinterpretcast.com/hello-world-mach-o">THE NITTY GRITTY OF “HELLO WORLD” ON OS X</a><br />
 <a href="http://www.objc.io/issue-6/mach-o-executables.html">Mach-O Executables</a><br />
 <a href="https://www.mikeash.com/pyblog/friday-qa-2012-11-09-dyld-dynamic-linking-on-os-x.html">Dynamic Linking On OS X</a><br />
@@ -550,9 +550,9 @@ section，它负责为DWARF格式提供栈展开信息。</li>
                             
                                 <li><a href="http://zrongl.github.io/translation/2015/05/13/translate-aticle-share.html" title="Article Share" rel="bookmark">Article Share</a></li>
                             
-                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
-                            
                                 <li><a href="http://zrongl.github.io/translation/2015/05/12/graphics-performance.html" title="Graphics Performance" rel="bookmark">Graphics Performance</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
                             
                                 <li><a href="http://zrongl.github.io/ios/2015/05/07/ios-screen-rotate.html" title="iOS Screen Rotate" rel="bookmark">iOS Screen Rotate</a></li>
                             
@@ -587,22 +587,6 @@ section，它负责为DWARF格式提供栈展开信息。</li>
             </div>
         </div>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        
-            
-                
-                <script type="text/javascript">
-                    var duoshuoQuery = {short_name:"zrongl"};
-                    (function() {
-                        var ds = document.createElement('script');
-                        ds.type = 'text/javascript';ds.async = true;
-                        ds.src = 'http://static.duoshuo.com/embed.js';
-                        ds.charset = 'UTF-8';
-                        (document.getElementsByTagName('head')[0]
-                        || document.getElementsByTagName('body')[0]).appendChild(ds);
-                    })();
-                </script>
-                
-            
         
     </body>
 </html>

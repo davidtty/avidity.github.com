@@ -123,12 +123,12 @@
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
         <span class="info-link"><a href="http://zrongl.github.io/categories.html#ios-ref" >ios</a></span>
     </div>
-    <h3 id="section">前言</h3>
-<p>默认情况下,UIKit framework通过监听UIDeviceOrientationDidChangeNotification来自动的更新界面方向 
+    <p>###前言
+默认情况下,UIKit framework通过监听UIDeviceOrientationDidChangeNotification来自动的更新界面方向 
 当UIKit接收到屏幕旋转的通知后,它会利用UIApplication和root view controller来确定是否支持新方向的旋转.如果支持则window改变尺寸以适应新的方向,然后window通知root view controller调整尺寸以适应新的(屏幕)尺寸，最后该尺寸会被逐级的传递给各个子级的view.</p>
 
-<h3 id="section-1">事件的响应链</h3>
-<p>当屏幕旋转时，会触发以下响应:</p>
+<p>###事件的响应链
+当屏幕旋转时，会触发以下响应:</p>
 
 <p><strong>1.</strong> window调用root view controller的方法检测是否支持旋转<br />
 <em>•对于IOS 5.0之前的系统</em>：<br />
@@ -154,7 +154,7 @@ viewcontroller容器(root view controller)会将该消息转发给当前正在�
 <p>对于push的view controller所支持的旋转方向是由navigationController的回调控制的<br />
 对于present的view controller所支持的选装方向是由本view controller的回调控制的</p>
 
-<h3 id="font-colorff0000font"><font color="#ff0000">注意事项：</font></h3>
+<p>###<font color="#ff0000">注意事项：</font></p>
 
 <p><strong>1.</strong> 尽量使用autoresizingMask进行相对布局,这样无需改变view的frame,减少性能消耗<br />
 <strong>2.</strong> 屏幕旋转过程中禁止视图中事件的传递.(旋转过程中屏蔽点击事件)<br />
@@ -163,14 +163,14 @@ viewcontroller容器(root view controller)会将该消息转发给当前正在�
 <strong>5.</strong> 旋转完成后重新加载可见tableview的数据，使得tableview显示的行数适合屏幕尺寸<br />
 <strong>6.</strong> 监听旋转消息去更新应用的状态信息,可以通过viewcontroller的回调方法或设备方向的notification来记录当前设备的方向,从而做出必要的调整(其他viewcontroller显示的时候需要根据当前设备方向做出对应的调整).</p>
 
-<h4 id="screenrotatehttpsgithubcomzronglscreenrotate"><a href="https://github.com/zrongl/ScreenRotate">ScreenRotate</a></h4>
+<p>####<a href="https://github.com/zrongl/ScreenRotate">ScreenRotate</a></p>
 
     <nav class="article-previous fn-clear">
         
         <a class="prev" href="/essay/2011/09/30/freedom-thinking.html" rel="bookmark">&laquo;&nbsp;自由的探究</a>
         
         
-        <a class="next" href="/translation/2015/05/12/graphics-performance.html" rel="bookmark">Graphics Performance&nbsp;&raquo;</a>
+        <a class="next" href="/ios/2015/05/12/ios-objectiveC-dry-cargo.html" rel="bookmark">Objective-C 知识干货&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">
@@ -204,9 +204,9 @@ viewcontroller容器(root view controller)会将该消息转发给当前正在�
                             
                                 <li><a href="http://zrongl.github.io/translation/2015/05/13/translate-aticle-share.html" title="Article Share" rel="bookmark">Article Share</a></li>
                             
-                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
-                            
                                 <li><a href="http://zrongl.github.io/translation/2015/05/12/graphics-performance.html" title="Graphics Performance" rel="bookmark">Graphics Performance</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
                             
                                 <li><a href="http://zrongl.github.io/ios/2015/05/07/ios-screen-rotate.html" title="iOS Screen Rotate" rel="bookmark">iOS Screen Rotate</a></li>
                             
@@ -241,22 +241,6 @@ viewcontroller容器(root view controller)会将该消息转发给当前正在�
             </div>
         </div>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        
-            
-                
-                <script type="text/javascript">
-                    var duoshuoQuery = {short_name:"zrongl"};
-                    (function() {
-                        var ds = document.createElement('script');
-                        ds.type = 'text/javascript';ds.async = true;
-                        ds.src = 'http://static.duoshuo.com/embed.js';
-                        ds.charset = 'UTF-8';
-                        (document.getElementsByTagName('head')[0]
-                        || document.getElementsByTagName('body')[0]).appendChild(ds);
-                    })();
-                </script>
-                
-            
         
     </body>
 </html>

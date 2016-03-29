@@ -125,8 +125,8 @@
     </div>
     <p>在上一篇<a href="http://robots.thoughtbot.com/designing-for-ios-taming-uibutton">文章</a>中,我们通过不同的方法实现了几种自定义Button，我特意想展现的是这几种方法在性能上的不同。</p>
 
-<h3 id="section">幕后花絮</h3>
-<p>为了了解影响性能的因素，我们需要仔细地观察iOS底层绘图技术栈(technology stack)。下图展示了和绘图相关的框架和库及其它们之间的关系：</p>
+<p>###幕后花絮
+为了了解影响性能的因素，我们需要仔细地观察iOS底层绘图技术栈(technology stack)。下图展示了和绘图相关的框架和库及其它们之间的关系：</p>
 
 <p><img src="/images/post/2015-05-13-graphics-performance-img01.png" alt="" /></p>
 
@@ -167,20 +167,20 @@
 <em>7.</em> 此时在你设备中任何屏幕外绘制的图形都会被黄色覆盖。<br />
 <strong>Update:</strong>你也可以勾选”Debug &gt; Color Offscreen-Rendered”选项，在模拟器中观察屏幕外渲染的UI。除非你是在进行性能测试，否则在模拟器中去观察屏幕外渲染是非常直接和方便的。<br /></p>
 
-<h3 id="uibutton">UIButton的案例</h3>
-<p>现在让我们来比较一下<a href="http://robots.thoughtbot.com/post/33427366406/designing-for-ios-taming-uibutton">之前</a>几种自定义Button方法的性能。<br /></p>
+<p>###UIButton的案例
+现在让我们来比较一下<a href="http://robots.thoughtbot.com/post/33427366406/designing-for-ios-taming-uibutton">之前</a>几种自定义Button方法的性能。<br /></p>
 
-<h4 id="section-1">使用预渲染的资源</h4>
-<p>自定义使用<code>UIImage</code>做为背景的button，该<code>UIImage</code>完全是依赖GPU去对存储在硬盘中的图像资源进行渲染而得到的。可调整大小的背景图片是另外一种选择，这种做法的好处是可以减小app应用的大小，并且在进行像素拉伸和平铺的时候可以利用硬件加速。<br /></p>
+<p>####使用预渲染的资源
+自定义使用<code>UIImage</code>做为背景的button，该<code>UIImage</code>完全是依赖GPU去对存储在硬盘中的图像资源进行渲染而得到的。可调整大小的背景图片是另外一种选择，这种做法的好处是可以减小app应用的大小，并且在进行像素拉伸和平铺的时候可以利用硬件加速。<br /></p>
 
-<h4 id="calayers">使用CALayers</h4>
-<p>基于CALayer的方法的实现需要借助屏幕外绘制，因为它使用了遮罩去渲染圆角。我们还要明确的禁止掉使用<code>Core Animation</code>时默认打开的动画。除非你需要动画的切换，否则底线（Bottom line）这种技术是不适用于自定义画图的。<br /></p>
+<p>####使用CALayers
+基于CALayer的方法的实现需要借助屏幕外绘制，因为它使用了遮罩去渲染圆角。我们还要明确的禁止掉使用<code>Core Animation</code>时默认打开的动画。除非你需要动画的切换，否则底线（Bottom line）这种技术是不适用于自定义画图的。<br /></p>
 
-<h4 id="drawrect">使用<code>drawRect</code></h4>
-<p><code>drawRect</code>方法依赖<code>Core Graphics</code>来完成自定义绘图，但是他最大的缺点在于它处理touch事件的方式：每当button被按下时，<code>setNeedDisplay</code>强制它进行重绘；简单的一次点击就有可能进行一次甚至是两次的重绘。这并不是一个利用CPU和内存的好的方式，尤其是在同一个界面中同时存在多个通过<code>drawRect</code>方法创建的UIButon实例的情况下。<br /></p>
+<p>####使用<code>drawRect</code>
+<code>drawRect</code>方法依赖<code>Core Graphics</code>来完成自定义绘图，但是他最大的缺点在于它处理touch事件的方式：每当button被按下时，<code>setNeedDisplay</code>强制它进行重绘；简单的一次点击就有可能进行一次甚至是两次的重绘。这并不是一个利用CPU和内存的好的方式，尤其是在同一个界面中同时存在多个通过<code>drawRect</code>方法创建的UIButon实例的情况下。<br /></p>
 
-<h4 id="section-2">混合的方法</h4>
-<p>那是不是意味着使用预渲染的资源是唯一可行的方案呢？并不是这样的。如果你仍然需要使用代码去进行绘制时，有一些方法可以优化你的代码并减少性能损耗。其中一种方法就是生成一张可拉伸的位图图像然后在所有的实例中复用这张图片。<br />
+<p>####混合的方法
+那是不是意味着使用预渲染的资源是唯一可行的方案呢？并不是这样的。如果你仍然需要使用代码去进行绘制时，有一些方法可以优化你的代码并减少性能损耗。其中一种方法就是生成一张可拉伸的位图图像然后在所有的实例中复用这张图片。<br />
 下面我们一步一步的去创建一个<code>UIButton</code>的子类，然后再定义我们的类级别的静态变量：</p>
 <pre><code>// In CBHybrid.m
 #import "CBHybrid.h"
@@ -269,17 +269,17 @@ UIGraphicsEndImageContext();
 
 <p>完整的子类的代码在<a href="https://github.com/kaishin/custom-UIButton/blob/master/Custom%20UIButtons/CBHybrid.m">这儿</a>。</p>
 
-<h3 id="section-3">结束语</h3>
-<p>该说的都说了该所的也都做了，其实预渲染资源比任何基于代码的方案表现的都要好。但是话说回来，就灵活性和效率而言<code>Core Graphicsis</code>的使用已经足够了，我们上面所做的性能上的优化，在当今的硬件环境中已经看不出明显的差别了。</p>
+<p>###结束语
+该说的都说了该所的也都做了，其实预渲染资源比任何基于代码的方案表现的都要好。但是话说回来，就灵活性和效率而言<code>Core Graphicsis</code>的使用已经足够了，我们上面所做的性能上的优化，在当今的硬件环境中已经看不出明显的差别了。</p>
 
 <p><em>原文地址：<a href="https://robots.thoughtbot.com/designing-for-ios-graphics-performance">https://robots.thoughtbot.com/designing-for-ios-graphics-performance</a></em></p>
 
     <nav class="article-previous fn-clear">
         
-        <a class="prev" href="/ios/2015/05/07/ios-screen-rotate.html" rel="bookmark">&laquo;&nbsp;iOS Screen Rotate</a>
+        <a class="prev" href="/ios/2015/05/12/ios-objectiveC-dry-cargo.html" rel="bookmark">&laquo;&nbsp;Objective-C 知识干货</a>
         
         
-        <a class="next" href="/ios/2015/05/12/ios-objectiveC-dry-cargo.html" rel="bookmark">Objective-C 知识干货&nbsp;&raquo;</a>
+        <a class="next" href="/translation/2015/05/13/translate-aticle-share.html" rel="bookmark">Article Share&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">
@@ -313,9 +313,9 @@ UIGraphicsEndImageContext();
                             
                                 <li><a href="http://zrongl.github.io/translation/2015/05/13/translate-aticle-share.html" title="Article Share" rel="bookmark">Article Share</a></li>
                             
-                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
-                            
                                 <li><a href="http://zrongl.github.io/translation/2015/05/12/graphics-performance.html" title="Graphics Performance" rel="bookmark">Graphics Performance</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
                             
                                 <li><a href="http://zrongl.github.io/ios/2015/05/07/ios-screen-rotate.html" title="iOS Screen Rotate" rel="bookmark">iOS Screen Rotate</a></li>
                             
@@ -350,22 +350,6 @@ UIGraphicsEndImageContext();
             </div>
         </div>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        
-            
-                
-                <script type="text/javascript">
-                    var duoshuoQuery = {short_name:"zrongl"};
-                    (function() {
-                        var ds = document.createElement('script');
-                        ds.type = 'text/javascript';ds.async = true;
-                        ds.src = 'http://static.duoshuo.com/embed.js';
-                        ds.charset = 'UTF-8';
-                        (document.getElementsByTagName('head')[0]
-                        || document.getElementsByTagName('body')[0]).appendChild(ds);
-                    })();
-                </script>
-                
-            
         
     </body>
 </html>

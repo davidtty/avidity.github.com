@@ -123,57 +123,57 @@
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
         <span class="info-link"><a href="http://zrongl.github.io/categories.html#ios-ref" >ios</a></span>
     </div>
-    <h3 id="object-c-runtime">Object-C runtime</h3>
-<p>Object-C动态运行时特性是用C和汇编实现的,可以使得程序在运行时才去创建，访问，修改类或对象的属性，方法或协议。</p>
+    <p>###Object-C runtime
+Object-C动态运行时特性是用C和汇编实现的,可以使得程序在运行时才去创建，访问，修改类或对象的属性，方法或协议。</p>
 
-<h3 id="section">对象、类和元类</h3>
-<p><img src="http://zrongl.github.io/images/post/2015-05-12-ios-objectiveC-dry-cargo-img01.jpg" alt="img" /></p>
+<p>###对象、类和元类
+<img src="http://zrongl.github.io/images/post/2015-05-12-ios-objectiveC-dry-cargo-img01.jpg" alt="img" /></p>
 
-<h3 id="methodselimp">Method、SEL和IMP</h3>
-<p>Mehtod是一个函数整体的总称，包括方法名，返回值，参数及实现。<br />
+<p>###Method、SEL和IMP
+Mehtod是一个函数整体的总称，包括方法名，返回值，参数及实现。<br />
 SEL本质上是<code>char *</code>指针，代表方法的名称。<br />
 IMP本质上是函数指针，指向方法的地址。<br />
 每一个Object-C对象结构中都维护有一个方法列表，其中方法是以key-value的形式存在的，key就是SEL，而value则是IMP，所以OC中同一对象中不能存在名字相同的方法，即使它们有不同的传入参数。<br /></p>
 
-<h3 id="section-1">消息传递</h3>
-<p>自己类的cacheList/mehtodList-&gt;<br />
+<p>###消息传递
+自己类的cacheList/mehtodList-&gt;<br />
 父类们的cacheList/mehtodList-&gt;<br />
 动态方法解析resolveInstanceMethod-&gt;<br />
 接受者重定向forwardingTargetForSelector-&gt;<br />
 最后的转发methodSignatureForSelector<br /></p>
 
-<h4 id="deepintoruntimehttpsgithubcomzrongldeepintoruntime"><a href="https://github.com/zrongl/DeepIntoRuntime">DeepIntoRuntime</a></h4>
-<p>####<a href="https://github.com/zrongl/DeepIntoRuntime/blob/master/OCRuntime.pdf">详情请参阅</a></p>
+<p>####<a href="https://github.com/zrongl/DeepIntoRuntime">DeepIntoRuntime</a>
+####<a href="https://github.com/zrongl/DeepIntoRuntime/blob/master/OCRuntime.pdf">详情请参阅</a></p>
 
-<h3 id="category">Category</h3>
-<p>可以动态地为已经存在的类添加新的方法，这样可以保证类的原始设计规模较小，功能增加时再逐步扩展。<br />
+<p>###Category
+可以动态地为已经存在的类添加新的方法，这样可以保证类的原始设计规模较小，功能增加时再逐步扩展。<br />
 <strong>加载时机：</strong><br />
 1.打开objc源代码，找到 objc-os.mm, 函数<code>_objc_init</code>为runtime的加载入口，由libSystem调用，进行初始化操作。<br />
 2.之后调用objc-runtime-new.mm -&gt; <code>map_images</code>加载map到内存<br />
 3.之后调用objc-runtime-new.mm-&gt; <code>_read_images</code>初始化内存中的map, 这个时候将会load所有的类，协议还有Category。NSObject的<code>+load</code>方法就是这个时候调用的<br /></p>
 
-<h3 id="associate">Associate</h3>
-<p>通过<strong>类别</strong>和<strong>访问器</strong>，再结合<strong>联合存储</strong>技术，我们可以为类增加属性。即在categray文件中声明属性及其访问器，并用<code>objc_setAssociatedObject</code>和<code>objc_getAssociatedObject</code>方法去设置和读取属性。<br />
+<p>###Associate
+通过<strong>类别</strong>和<strong>访问器</strong>，再结合<strong>联合存储</strong>技术，我们可以为类增加属性。即在categray文件中声明属性及其访问器，并用<code>objc_setAssociatedObject</code>和<code>objc_getAssociatedObject</code>方法去设置和读取属性。<br />
 <strong>实现原理：</strong><br />
 1.有一个单例的<code>AssociationsHashMap</code>实例<br />
 2.<code>AssociationsHashMap</code>实例用于保存一个个的<code>ObjectAssociationMap</code>对象<br />
 3.每个类都拥有一个<code>ObjectAssociationMap</code>实例，每个类通过联合存储模式保存的键值对也都保存在<code>ObjectAssociationMap</code>实例中。<br />
 4.Key对应的值无所谓，我们需要的是key的地址。<br /></p>
 
-<h4 id="deepintocategoryhttpsgithubcomzrongldeepintocatgory"><a href="https://github.com/zrongl/DeepIntoCatgory">DeepIntoCategory</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoCatgory">DeepIntoCategory</a></p>
 
-<h3 id="kvo">KVO</h3>
-<p>键值观察建立对对象成员变量的观察，当变量值发生改变时会触发相应的观察事件<br />
+<p>###KVO
+键值观察建立对对象成员变量的观察，当变量值发生改变时会触发相应的观察事件<br />
 <strong>实现原理:</strong><br />
 当某个类的对象第一次被观察时，<strong>系统就会在运行期动态地创建该类的一个派生类</strong>，在这个派生类中重写基类中任何被观察属性的 setter 方法。
 <strong>派生类在被重写的 setter 方法实现真正的通知机制</strong>，就如前面手动实现键值观察那样。这么做是基于设置属性会调用 setter 方法，而通过重写就获得了 KVO 需要的通知机制。当然前提是要通过遵循 KVO 的属性设置方式来变更属性值，如果仅是直接修改属性对应的成员变量，是无法实现 KVO 的。
 同时派生类还重写了 class 方法以“欺骗”外部调用者它就是起初的那个类。然后系统将这个对象的 isa 指针指向这个新诞生的派生类，因此这个对象就成为该派生类的对象了，因而在该对象上对 setter 的调用就会调用重写的 setter，从而激活键值通知机制。此外，派生类还重写了 dealloc 方法来释放资源。<br />
 <strong><code>NSNotification的通知回调会在发出post的线程中同步执行</code></strong></p>
 
-<h4 id="deepintokvohttpsgithubcomzrongldeepintokvo"><a href="https://github.com/zrongl/DeepIntoKVO">DeepIntoKVO</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoKVO">DeepIntoKVO</a></p>
 
-<h3 id="section-2">内存管理</h3>
-<p>object-C是用引用计数来维护和管理内存，遵循谁创建谁释放的原则。
+<p>###内存管理
+object-C是用引用计数来维护和管理内存，遵循谁创建谁释放的原则。
 arc并非其他语言的垃圾回收器，它只是将MRC中需要手动添加的<code>retian/release/autorelease</code>方法的过程交给编译去做了相应的处理。<br />
 对于<code>@property</code>属性的理解：<br />
 <code>retain/assign/strong/weak/unsafe_unretained/copy</code><br />
@@ -193,10 +193,10 @@ NSLog(@"%@", weak_obj);
 <p><code>autorelease</code> 自动释放池<br />
 <code>bridge</code> void * 与 id之间的转换</p>
 
-<h4 id="deepintomemoryhttpsgithubcomzrongldeepintomemory"><a href="https://github.com/zrongl/DeepIntoMemory">DeepIntoMemory</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoMemory">DeepIntoMemory</a></p>
 
-<h3 id="block">Block</h3>
-<p>Block又称匿名函数，他的核心是一段可执行的代码，你可以给它传递参数或获取返回值。<br />
+<p>###Block
+Block又称匿名函数，他的核心是一段可执行的代码，你可以给它传递参数或获取返回值。<br />
 在内存中Block分三种类型：<br />
 •<code>_NSConcreteGlobalBlock</code> 全局的静态block，不会访问任何外部变量<br />
 •<code>_NSConcreteStackBlock</code> 保存在栈中的block，出栈时会被销毁<br />
@@ -211,10 +211,10 @@ block();</code></pre>
 <p>在不允许使用__weak修饰符的情况下，避免使用__unsafe_unretained修饰符，但是前提是Block必须被执行。<br />
 •<code>_NSConcreteMallocBlock</code> 保存在堆中的block，当引用计数为0时会被销毁<br /></p>
 
-<h4 id="deepintoblockhttpsgithubcomzrongldeepintoblock"><a href="https://github.com/zrongl/DeepIntoBlock">DeepIntoBlock</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoBlock">DeepIntoBlock</a></p>
 
-<h3 id="runloop">Runloop</h3>
-<p>runloop是iOS中实现的一种事件驱动模型：<br />
+<p>###Runloop
+runloop是iOS中实现的一种事件驱动模型：<br />
 <strong>主线程</strong>的runloop默认是启动的，它主要执行更新用户界面的操作。<br />
 <strong>子线程</strong>的runloop默认是关闭的，所以在子线程的runloop中添加了一个时间源后，需要手动启动子线程的runloop才能对时间源进行监听和触发。如果想保持子线程长时间运行不退出，可以启动线程的runloop向其中添加一些长时间或周期性的事件源，如：<code>performSelecter</code><code>NSTimer</code><code>NSURLConection</code>等<br /></p>
 
@@ -223,12 +223,12 @@ block();</code></pre>
 <code>NSRunLoopCommonModes</code> 这是一个伪模式，其为一组run loop mode的集合，将输入源加入此模式意味着在Common Modes中包含的所有输入源都可以处理。<br />
 <code>UITrackingRunLoopMode</code> 用户界面拖动操作时处于此种模式下，在此模式下会限制输入事件的处理。例如，当手指按住UITableView拖动时就会处于此模式。</p>
 
-<h4 id="deepintorunloophttpsgithubcomzrongldeepintorunloop"><a href="https://github.com/zrongl/DeepIntoRunloop">DeepIntoRunloop</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoRunloop">DeepIntoRunloop</a></p>
 
-<h3 id="thread">Thread</h3>
+<p>###Thread</p>
 
-<h5 id="gcd">GCD</h5>
-<p><em>despatch queue按照任务执行顺序分为：<br />
+<p>#####GCD
+<em>despatch queue按照任务执行顺序分为：<br />
 串行队列(serial queue)：串行队列中的任务是顺序执行的(所有任务在一个线程中按顺序执行)<br />
 并行队列(concurrent queue)：并行队列中的任务是并发执行的(同时有多个线程并发执行任务)</em></p>
 
@@ -249,8 +249,8 @@ block();</code></pre>
 <code>dispatch_barrier_async</code> 用于任务调度，可实现等待前几个任务并行执行完成后，单独执行下面一条任务，等这条执行完成后，再并行执行后面的任务。<br />
 <code>dispatch_source</code> 用于监听系统的源，然后触发相应的处理。<br /></p>
 
-<h5 id="nsoperation">NSOperation</h5>
-<p><code>main</code>与<code>start</code><br />默认情况下<code>main</code>函数不会做任何事情，如果只是执行一些简单的任务只需要重载<code>main</code>函数即可；但是如果要执行一些复杂的并发操作需要重载<code>start</code>并手动更新operation的状态(excting，finish等)然后在<code>start</code>函数中进行一些operation状态的检查，满足条件后再调用<code>main</code>执行操作。<br /><br /></p>
+<p>#####NSOperation
+<code>main</code>与<code>start</code><br />默认情况下<code>main</code>函数不会做任何事情，如果只是执行一些简单的任务只需要重载<code>main</code>函数即可；但是如果要执行一些复杂的并发操作需要重载<code>start</code>并手动更新operation的状态(excting，finish等)然后在<code>start</code>函数中进行一些operation状态的检查，满足条件后再调用<code>main</code>执行操作。<br /><br /></p>
 
 <p><em>GCD与NSOperation的比较：<br /></em>
 <em>1.</em> <code>GCD</code>是底层的C语言构成的API，而<code>NSOperationQueue</code>及相关对象是Objc的对象。在GCD中，在队列中执行的是由block构成的任务，这是一个轻量级的数据结构；而<code>NSOperation</code>作为一个对象，为我们提供了更多的选择；<br />
@@ -261,40 +261,40 @@ block();</code></pre>
 <em>6.</em> 我们能够对<code>NSOperation</code>进行继承，在这之上添加成员变量与成员方法，提高整个代码的复用度，这比简单地将block任务排入执行队列更有自由度，能够在其之上添加更多自定制的功能。<br />
 <em>7.</em> <code>NSOperationQueue</code>将任务装载进主线程的队列中，runloop每执行一个循环都会取出队列中的一个任务去执行，这样使得在每两个operation被执行之间可以允许进行更新视图的操作。对于<code>dispatch_async</code>和<code>performSelectorOnMainThread</code>，则会将装载进队列中的block或selector一个接一个的执行，而不会插入更新视图或其他类似的操作。</p>
 
-<h5 id="nsthread">NSThread</h5>
+<p>#####NSThread</p>
 
-<h4 id="deepintothreadhttpsgithubcomzrongldeepintothread"><a href="https://github.com/zrongl/DeepIntoThread">DeepIntoThread</a></h4>
+<p>####<a href="https://github.com/zrongl/DeepIntoThread">DeepIntoThread</a></p>
 
-<h3 id="ios">iOS沙盒目录及其用途</h3>
-<p>下图为出自<a href="https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40010672-CH1-SW1">官方文档</a></p>
+<p>###iOS沙盒目录及其用途
+下图为出自<a href="https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40010672-CH1-SW1">官方文档</a></p>
 
 <p><img src="http://zrongl.github.io/images/post/2015-05-12-ios-objectiveC-dry-cargo-img02.png" alt="img" /></p>
 
-<h4 id="myappapp">MyApp.app</h4>
-<p>存储应用程序本身的数据，包括<font color="#ff0000">资源文件和可执行文件</font>等，并且该目录为只读的。程序启动以后，会根据需要从该目录中动态加载代码或资源到内存，这里用到了lazy loading的思想。<br /></p>
+<p>####MyApp.app
+存储应用程序本身的数据，包括<font color="#ff0000">资源文件和可执行文件</font>等，并且该目录为只读的。程序启动以后，会根据需要从该目录中动态加载代码或资源到内存，这里用到了lazy loading的思想。<br /></p>
 
-<h4 id="documents">Documents</h4>
-<p>存储应用程序的数据文件，并且这些数据应该是<font color="#ff0000">不可再生的</font>。<br />
+<p>####Documents
+存储应用程序的数据文件，并且这些数据应该是<font color="#ff0000">不可再生的</font>。<br />
 <em>Documents/Inbox</em><br /></p>
 <font color="#ff0000">存储由外部应用请求当前应用程序打开的文件</font>
 <p>。</p>
 
-<h4 id="library">Library</h4>
-<p>苹果建议用来存放<font color="#ff0000">默认设置或其它状态信息</font>。除Caches子目录外，其他目录会被iTunes同步。<br />
+<p>####Library
+苹果建议用来存放<font color="#ff0000">默认设置或其它状态信息</font>。除Caches子目录外，其他目录会被iTunes同步。<br />
 <em>Library/Caches</em><br />
 存储<font color="#ff0000">可再生的应用程序的数据文件</font>，如网络请求的数据，并且应用程序负责删除该目录下的文件。<br />
 <em>Library/Preferences</em><br />
 存储应用程序的<font color="#ff0000">偏好设置文件</font>，程序中使用NSUserDefaults写的数据会以plist的文件形式存储在该目录下。<br /></p>
 
-<h4 id="temp">Temp</h4>
-<p>保存各种<font color="#ff0000">临时文件</font>，即应用再次启动时不需要的文件，该目录下的东西随时(比如系统磁盘空间不足时)有可能<font color="#ff0000">被系统清理掉</font>。</p>
+<p>####Temp
+保存各种<font color="#ff0000">临时文件</font>，即应用再次启动时不需要的文件，该目录下的东西随时(比如系统磁盘空间不足时)有可能<font color="#ff0000">被系统清理掉</font>。</p>
 
     <nav class="article-previous fn-clear">
         
-        <a class="prev" href="/translation/2015/05/12/graphics-performance.html" rel="bookmark">&laquo;&nbsp;Graphics Performance</a>
+        <a class="prev" href="/ios/2015/05/07/ios-screen-rotate.html" rel="bookmark">&laquo;&nbsp;iOS Screen Rotate</a>
         
         
-        <a class="next" href="/translation/2015/05/13/translate-aticle-share.html" rel="bookmark">Article Share&nbsp;&raquo;</a>
+        <a class="next" href="/translation/2015/05/12/graphics-performance.html" rel="bookmark">Graphics Performance&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">
@@ -328,9 +328,9 @@ block();</code></pre>
                             
                                 <li><a href="http://zrongl.github.io/translation/2015/05/13/translate-aticle-share.html" title="Article Share" rel="bookmark">Article Share</a></li>
                             
-                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
-                            
                                 <li><a href="http://zrongl.github.io/translation/2015/05/12/graphics-performance.html" title="Graphics Performance" rel="bookmark">Graphics Performance</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
                             
                                 <li><a href="http://zrongl.github.io/ios/2015/05/07/ios-screen-rotate.html" title="iOS Screen Rotate" rel="bookmark">iOS Screen Rotate</a></li>
                             
@@ -365,22 +365,6 @@ block();</code></pre>
             </div>
         </div>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        
-            
-                
-                <script type="text/javascript">
-                    var duoshuoQuery = {short_name:"zrongl"};
-                    (function() {
-                        var ds = document.createElement('script');
-                        ds.type = 'text/javascript';ds.async = true;
-                        ds.src = 'http://static.duoshuo.com/embed.js';
-                        ds.charset = 'UTF-8';
-                        (document.getElementsByTagName('head')[0]
-                        || document.getElementsByTagName('body')[0]).appendChild(ds);
-                    })();
-                </script>
-                
-            
         
     </body>
 </html>
