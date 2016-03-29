@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>Graphics Performance - KOE</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="Zrongl" />
+        <meta name="description" content="zrongl blog" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="http://zrongl.github.io/atom.xml" />
+        <link rel="shortcut icon" href="/images/favicon.jpg" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="http://zrongl.github.io/css/syntax.css">
+        <link rel="stylesheet" href="http://zrongl.github.io/css/main.css">
+        
+        
+        <script>
+            var _hmt = _hmt || [];
+            (function() {
+                var hm = document.createElement("script");
+                hm.src = "//hm.baidu.com/hm.js?dab5aaae7261f4808b77574694e1a842";
+                var s = document.getElementsByTagName("script")[0]; 
+                s.parentNode.insertBefore(hm, s);
+            })();
+        </script>
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="http://zrongl.github.io"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="http://zrongl.github.io/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="http://zrongl.github.io/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="http://zrongl.github.io/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="http://zrongl.github.io/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="http://zrongl.github.io/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com/zrongl" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com/zrongl" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    <div class="article article-post">
+    <h2 class="title">Graphics Performance</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">12 May 2015</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="http://zrongl.github.io/categories.html#translation-ref" >translation</a></span>
+    </div>
+    <p>在上一篇<a href="http://robots.thoughtbot.com/designing-for-ios-taming-uibutton">文章</a>中,我们通过不同的方法实现了几种自定义Button，我特意想展现的是这几种方法在性能上的不同。</p>
+
+<h3 id="section">幕后花絮</h3>
+<p>为了了解影响性能的因素，我们需要仔细地观察iOS底层绘图技术栈(technology stack)。下图展示了和绘图相关的框架和库及其它们之间的关系：</p>
+
+<p><img src="/images/post/2015-05-13-graphics-performance-img01.png" alt="" /></p>
+
+<p>在最上层，<code>UIKit</code>管理着与用户界面的交互。它由一系列符合特定功能的UI控件组成，如：<code>UIButton</code>和<code>UILabel</code>。<code>UIKit</code>构建在<code>Core Animation</code>框架的最上层，<code>Core Animation</code>又是从OS X Leopardy一直到iOS中的，用于对动画进行平滑的转换。<br /></p>
+
+<p>更深一层的是<code>OpenGL ES</code>，一个开放标准的库用于在移动设备中对2D和3D计算机图形进行渲染。它被广泛的应用于游戏动画和<code>Core Animation</code>与<code>UIKit</code>底层动画的渲染上。软件层上另外一部分是<code>Core Graphics</code>——集成自<code>Quartz</code>（OS X中基于CPU的绘画引擎）。这两个底层的框架都是基于<code>C</code>语言开发的。<br /></p>
+
+<p>最底层的是由图形处理器(CPU)和主处理器(CPU)组成。<br /></p>
+
+<p><code>GPU</code>会对图形的合成和渲染进行硬件加速，<code>OpenGL</code>和<code>CoreAnimation/UIKit</code>都是基于<code>GPU</code>硬件加速去实现的。相比于Android硬件加速是iOS的一大优势，由于Android在绘制动画过程中过分的依赖CPU导致在复杂动画过程中会出现微弱的延迟。<br /></p>
+
+<p>屏幕外绘制（<code>Offscreen drawing</code>）是指在用到图像之前，提前由<code>GPU</code>在后台将位图渲染后，然后用到时候再有<code>CPU</code>绘制到屏幕中。<br /></p>
+
+<p>在iOS中，屏幕外绘制会自动的应用在以下几种情况：<br />
+• <code>Core Graphics</code>（任何以“CG”为开头的类）<br />
+• <code>drawRect()</code>方法中，即使他没有实现是空的<br />
+• <code>CALayers</code>的<code>shouldRasterize</code>属性被设置为YES的时候<br />
+• <code>CALayers</code>使用遮罩（<code>setMasksToBounds</code>）和动态阴影（<code>setShadow</code>）的时候<br />
+• 任何文本显示在屏幕上的时候，包括<code>Core Text</code><br />
+• <code>UIViewGoupOpacity</code><br />
+作为一般的规则，当动画发生的时候屏幕外绘制会影响到性能。你可以连接iOS设备使用Instruments工具查看哪部分UI正在进行屏幕外绘制：<br /></p>
+
+<p><em>1.</em> 用USB连接iOS设备<br />
+<em>2.</em> 打开Instruments<br /></p>
+
+<p><img src="/images/post/2015-05-13-graphics-performance-img02.png" alt="" /></p>
+
+<p><em>3.</em> 选择 “iOS &gt; Graphics &gt; Core Animation template”</p>
+
+<p><img src="/images/post/2015-05-13-graphics-performance-img03.png" alt="" /></p>
+
+<p><em>4.</em> 点击中间的纽扣图标</p>
+
+<p><img src="/images/post/2015-05-13-graphics-performance-img03.png" alt="" /></p>
+
+<p><em>5.</em> 选择你的设备座位目标设备<br />
+<em>6.</em> 勾选<code>"Color Offscreen-Rendered Yellow"</code>调试选项<br />
+<em>7.</em> 此时在你设备中任何屏幕外绘制的图形都会被黄色覆盖。<br />
+<strong>Update:</strong>你也可以勾选”Debug &gt; Color Offscreen-Rendered”选项，在模拟器中观察屏幕外渲染的UI。除非你是在进行性能测试，否则在模拟器中去观察屏幕外渲染是非常直接和方便的。<br /></p>
+
+<h3 id="uibutton">UIButton的案例</h3>
+<p>现在让我们来比较一下<a href="http://robots.thoughtbot.com/post/33427366406/designing-for-ios-taming-uibutton">之前</a>几种自定义Button方法的性能。<br /></p>
+
+<h4 id="section-1">使用预渲染的资源</h4>
+<p>自定义使用<code>UIImage</code>做为背景的button，该<code>UIImage</code>完全是依赖GPU去对存储在硬盘中的图像资源进行渲染而得到的。可调整大小的背景图片是另外一种选择，这种做法的好处是可以减小app应用的大小，并且在进行像素拉伸和平铺的时候可以利用硬件加速。<br /></p>
+
+<h4 id="calayers">使用CALayers</h4>
+<p>基于CALayer的方法的实现需要借助屏幕外绘制，因为它使用了遮罩去渲染圆角。我们还要明确的禁止掉使用<code>Core Animation</code>时默认打开的动画。除非你需要动画的切换，否则底线（Bottom line）这种技术是不适用于自定义画图的。<br /></p>
+
+<h4 id="drawrect">使用<code>drawRect</code></h4>
+<p><code>drawRect</code>方法依赖<code>Core Graphics</code>来完成自定义绘图，但是他最大的缺点在于它处理touch事件的方式：每当button被按下时，<code>setNeedDisplay</code>强制它进行重绘；简单的一次点击就有可能进行一次甚至是两次的重绘。这并不是一个利用CPU和内存的好的方式，尤其是在同一个界面中同时存在多个通过<code>drawRect</code>方法创建的UIButon实例的情况下。<br /></p>
+
+<h4 id="section-2">混合的方法</h4>
+<p>那是不是意味着使用预渲染的资源是唯一可行的方案呢？并不是这样的。如果你仍然需要使用代码去进行绘制时，有一些方法可以优化你的代码并减少性能损耗。其中一种方法就是生成一张可拉伸的位图图像然后在所有的实例中复用这张图片。<br />
+下面我们一步一步的去创建一个<code>UIButton</code>的子类，然后再定义我们的类级别的静态变量：</p>
+<pre><code>// In CBHybrid.m
+#import "CBHybrid.h"
+
+@implementation CBHybrid
+// Resizable background image for normal state
+static UIImage *gBackgroundImage;
+
+// Resizable background image for highlighted state
+static UIImage *gBackgroundImageHighlighted;
+// Background image border radius and height
+
+static int borderRadius = 5;
+static int height = 37;</code></pre>
+<p>接下来我们将绘制代码从<code>drawRect</code>中移到一个新的helper方法中，同时我们将生成一张可拉伸的图片替代那张全尺寸的图片，然后我们将输出的图片存储到一个静态变量中以便接下来使用：</p>
+<pre><code>- (UIImage *)drawBackgroundImageHighlighted:(BOOL)highlighted {
+    // Drawing code goes here
+}</code></pre>
+<p>首先，我们需要知道这张图片的宽度。为了使得性能最优，我们只在中心留出1pt的拉伸区域。</p>
+<pre><code>float width = 1 + (borderRadius * 2);
+</code></pre>
+<p><em>The height matters less in this case, as long as the button is tall enough for the gradient to be visible.</em>为了使得高度与其他button匹配我们设置图片高度为37pt。<br /></p>
+
+<p>接下来，我们需要一个位图上下文来绘图：</p>
+<pre><code>UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, 0.0);
+CGContextRef context = UIGraphicsGetCurrentContext();
+CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+</code></pre>
+<p>第二个布尔参数设为<code>NO</code>确保我们的图形上下文是非透明的。最后一个参数是比例因子（屏幕密度）。当设置为<code>0.0</code>的时候，他将被设置为设备默认的缩放因子。<br /></p>
+
+<p>下面的代码块与之前在<code>CBBezier</code>中用<code>Core Graphics</code>所实现的功能类似，保存更新的数据后用<code>highlighted</code>参数代替默认的<code>self.highlighted</code></p>
+<pre><code>// Gradient Declarations
+// NSArray *gradientColors = ...
+
+// Draw rounded rectangle bezier path
+UIBezierPath *roundedRectanglePath = [UIBezierPath bezierPathWithRoundedRect: CGRectMake(0, 0, width, height) cornerRadius: borderRadius];
+
+// Use the bezier as a clipping path
+[roundedRectanglePath addClip];
+
+// Use one of the two gradients depending on the state of the button
+CGGradientRef background = highlighted? highlightedGradient : gradient;
+
+// Draw gradient within the path
+CGContextDrawLinearGradient(context, background, CGPointMake(140, 0), CGPointMake(140, height-1), 0);
+
+// Draw border
+// [borderColor setStroke...
+
+// Draw Inner Glow
+// UIBezierPath *innerGlowRect...
+</code></pre>
+<p>剩下来我们唯一要做的是在<code>CBBezier</code>中将绘制的输出存储到一个<code>UIImage</code>中，然后调用<code>UIGraphicsEndImageContext</code>清理上下文环境。</p>
+<pre><code>UIImage* backgroundImage = UIGraphicsGetImageFromCurrentImageContext();
+// Cleanup
+UIGraphicsEndImageContext();
+</code></pre>
+<p>现在我们有了生成背景图片的方法，接下来我们得实现一个初始化方法来实例化这些图片并将它们设置为<code>CBHybrid</code>实例的背景。</p>
+<pre><code>- (void)setupBackgrounds {
+    // Generate background images if necessary
+    if (!gBackgroundImage &amp;&amp; !gBackgroundImageHighlighted) {
+        gBackgroundImage = [[self drawBackgroundImageHighlighted:NO] resizableImageWithCapInsets:UIEdgeInsetsMake(borderRadius, borderRadius, borderRadius, borderRadius) resizingMode:UIImageResizingModeStretch];
+        gBackgroundImageHighlighted = [[self drawBackgroundImageHighlighted:YES] resizableImageWithCapInsets:UIEdgeInsetsMake(borderRadius, borderRadius, borderRadius, borderRadius) resizingMode:UIImageResizingModeStretch];
+    }
+    // Set background for the button instance
+    [self setBackgroundImage:gBackgroundImage forState:UIControlStateNormal];
+    [self setBackgroundImage:gBackgroundImageHighlighted forState:UIControlStateHighlighted];
+}
+</code></pre>
+<p>初始化时我们设置按钮的属性为<code>custom</code>并实现<code>initWithCoder</code>(或者如果需要使用代码去初始化button时需要实现<code>initWithFrame</code>)：</p>
+<pre><code>+ (CBHybrid *)buttonWithType:(UIButtonType)type
+{
+    return [super buttonWithType:UIButtonTypeCustom];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self setupBackgrounds];
+    }
+    return self;
+}
+</code></pre>
+<p>为了确保新的类能够正常工作，在Interface Builder中复制一个button修改他的类为<code>CGHybrid</code>.修改button的<code>content</code>为<code>CGContext-generater image</code>然后创建运行。</p>
+
+<p><img src="/images/post/2015-05-13-graphics-performance-img05.png" alt="" /></p>
+
+<p>完整的子类的代码在<a href="https://github.com/kaishin/custom-UIButton/blob/master/Custom%20UIButtons/CBHybrid.m">这儿</a>。</p>
+
+<h3 id="section-3">结束语</h3>
+<p>该说的都说了该所的也都做了，其实预渲染资源比任何基于代码的方案表现的都要好。但是话说回来，就灵活性和效率而言<code>Core Graphicsis</code>的使用已经足够了，我们上面所做的性能上的优化，在当今的硬件环境中已经看不出明显的差别了。</p>
+
+<p><em>原文地址：<a href="https://robots.thoughtbot.com/designing-for-ios-graphics-performance">https://robots.thoughtbot.com/designing-for-ios-graphics-performance</a></em></p>
+
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="/ios/2015/05/07/ios-screen-rotate.html" rel="bookmark">&laquo;&nbsp;iOS Screen Rotate</a>
+        
+        
+        <a class="next" href="/ios/2015/05/12/ios-objectiveC-dry-cargo.html" rel="bookmark">Objective-C 知识干货&nbsp;&raquo;</a>
+        
+    </nav>
+    <div class="comment">
+        
+            
+            <div class="ds-thread"></div>
+            
+        
+    </div>
+</div>
+
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="/images/header-img.jpg" />
+                            </div>
+                            <div class="det-text">
+                                <p><strong>观善恶众相 品百味人生 <br />一花一世界 一叶一菩提</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="http://zrongl.github.io/translation/2015/05/19/mach-o-file-format-reference.html" title="Mach-O File Format And otool Tool" rel="bookmark">Mach-O File Format And otool Tool</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/translation/2015/05/13/translate-aticle-share.html" title="Article Share" rel="bookmark">Article Share</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/12/ios-objectiveC-dry-cargo.html" title="Objective-C 知识干货" rel="bookmark">Objective-C 知识干货</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/translation/2015/05/12/graphics-performance.html" title="Graphics Performance" rel="bookmark">Graphics Performance</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/ios/2015/05/07/ios-screen-rotate.html" title="iOS Screen Rotate" rel="bookmark">iOS Screen Rotate</a></li>
+                            
+                                <li><a href="http://zrongl.github.io/essay/2011/09/30/freedom-thinking.html" title="自由的探究" rel="bookmark">自由的探究</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2015. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        
+            
+                
+                <script type="text/javascript">
+                    var duoshuoQuery = {short_name:"zrongl"};
+                    (function() {
+                        var ds = document.createElement('script');
+                        ds.type = 'text/javascript';ds.async = true;
+                        ds.src = 'http://static.duoshuo.com/embed.js';
+                        ds.charset = 'UTF-8';
+                        (document.getElementsByTagName('head')[0]
+                        || document.getElementsByTagName('body')[0]).appendChild(ds);
+                    })();
+                </script>
+                
+            
+        
+    </body>
+</html>
